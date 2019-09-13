@@ -14,6 +14,7 @@ namespace Shop.Web.Controllers
     {
         private readonly DataContext _context;
 
+        //Esta inyeccion viene desde el D:\Projects\Shop\Shop.Web\Startup.cs
         public ProductsController(DataContext context)
         {
             _context = context;

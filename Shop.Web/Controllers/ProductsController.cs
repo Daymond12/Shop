@@ -1,41 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Shop.Web.Data;
-using Shop.Web.Data.Entities;
-
+﻿
 namespace Shop.Web.Controllers
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Shop.Web.Data;
+    using Shop.Web.Data.Entities;
+
+
     public class ProductsController : Controller
     {
-        private readonly DataContext _context;
+        private readonly IRepository repository;
+
+        #region MODIFICACIÓN DEL DATA CONTEXT
+
+        /// <summary>
+        /// Se ha dejado en pelotas el constructor, ya que hacía una inyección que 
+        /// lo vinculaba directaente a la BD
+        /// </summary>
+        /// <returns></returns>
+        // private readonly DataContext _context;
 
         //Esta inyeccion viene desde el D:\Projects\Shop\Shop.Web\Startup.cs
-        public ProductsController(DataContext context)
+        //public ProductsController(DataContext context)
+        //{
+        //    _context = context;
+        //}
+        #endregion
+
+        public ProductsController(IRepository repository)
         {
-            _context = context;
+            this.repository = repository;
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Products.ToListAsync());
+            return View(this.repository.GetProducts());
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = this.repository.GetProduct(id.Value);
+
             if (product == null)
             {
                 return NotFound();
@@ -51,16 +66,14 @@ namespace Shop.Web.Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailabe,Stock")] Product product)
+        public async Task<IActionResult> Create(Product product)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                this.repository.AddProduct(product);
+                await this.repository.SaveAllAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(product);

@@ -35,6 +35,11 @@ namespace Shop.Web
             //INYECCÓN DEL SEEDB
             services.AddTransient<SeedDb>();
 
+            //INYECTANDO EL IREPOSITORY
+            services.AddScoped<IRepository, Repository>();
+            
+
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

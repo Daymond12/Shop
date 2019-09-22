@@ -2,16 +2,13 @@
 namespace Shop.Web.Data.Entities
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Threading.Tasks;
 
-    public class Product
+    public class Product:IEntity
     {
         public int Id { get; set; }
 
-        [MaxLength(50,ErrorMessage ="This Field only can contain {1} characters length.")]//Esta notación cambia la estructura de la base de datos
+        [MaxLength(50, ErrorMessage = "This Field only can contain {1} characters length.")]//Esta notación cambia la estructura de la base de datos
         [Required]
         public string Name { get; set; }
 
@@ -19,7 +16,7 @@ namespace Shop.Web.Data.Entities
         //DisplayFormat no cambia la BD, es solo visual
         public decimal Price { get; set; }
 
-        
+
         [Display(Name = "Image")]
         public string ImageUrl { get; set; }
 
@@ -36,6 +33,9 @@ namespace Shop.Web.Data.Entities
 
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public double Stock { get; set; }
+        //relación uno a varios, product es el lado varios
+        //solo acá se hace cambio para hacer la relación
+        public User User { get; set; }
     }
 
 }

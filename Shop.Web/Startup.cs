@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Shop.Web.Data;
-
+﻿
 namespace Shop.Web
 {
+    using Data;
+    using Data.Entities;
+    using Helpers;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -27,6 +25,28 @@ namespace Shop.Web
         public void ConfigureServices(IServiceCollection services)
         {
 
+            //le decimos que la clase user implemantara el IdentityRole
+            //aca fongiguramos las restricciones y un viajao de  cosas
+            services.AddIdentity<User, IdentityRole>(cfg =>
+            {
+                //unico usuario con un email
+                cfg.User.RequireUniqueEmail = true;
+                //no requiere numeros
+                cfg.Password.RequireDigit = false;
+                //no requiere caracteres especiales
+                cfg.Password.RequiredUniqueChars = 0;
+                //no requiere minusculas
+                cfg.Password.RequireLowercase = false;
+                //no requiere letras que no seal alfabéticas
+                cfg.Password.RequireNonAlphanumeric = false;
+                //no requiere mayúsculas
+                cfg.Password.RequireUppercase = false;
+                //longitud mínima del password
+                cfg.Password.RequiredLength = 6;
+            })
+        .AddEntityFrameworkStores<DataContext>();
+
+
             services.AddDbContext<DataContext>(cfg =>
             {
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
@@ -37,7 +57,12 @@ namespace Shop.Web
 
             //INYECTANDO EL IREPOSITORY
             services.AddScoped<IRepository, Repository>();
-            
+
+            //inyectando el Iuserhelper
+            //con eso el proyeco sabrá lo que tiene que inyectar y que implementar
+            //se inyectan/configuran mis interfaces
+            services.AddScoped<IUserHelper, UserHelper>();
+
 
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -67,6 +92,7 @@ namespace Shop.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseAuthentication();//requiere autenticación|
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>

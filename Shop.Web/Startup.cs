@@ -56,7 +56,8 @@ namespace Shop.Web
             services.AddTransient<SeedDb>();
 
             //INYECTANDO EL IREPOSITORY
-            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICountryRepository, CountryRepository>();
 
             //inyectando el Iuserhelper
             //con eso el proyeco sabrá lo que tiene que inyectar y que implementar

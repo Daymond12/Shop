@@ -29,14 +29,32 @@ namespace Shop.Web
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
+    using Shop.Web.Helpers;
+    using System;
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args).Build();
-            RunSeeding(host);
-            host.Run();
+           
+            try
+            {
+                var host = CreateWebHostBuilder(args).Build();
+                RunSeeding(host);
+                host.Run();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+            try
+            {
+                CreateWebHostBuilder(args).Build().Run();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
         }
 
         private static void RunSeeding(IWebHost host)

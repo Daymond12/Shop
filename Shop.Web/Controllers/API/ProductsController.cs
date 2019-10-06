@@ -15,11 +15,13 @@ namespace Shop.Web.Controllers.API
     public class ProductsController : Controller
     {
         private readonly IProductRepository productRepository;
+        
 
         //inyectamos el product repository para acceder a los datos del producto
         public ProductsController( IProductRepository productRepository)
         {
             this.productRepository = productRepository;
+            
         }
 
 

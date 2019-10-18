@@ -4,7 +4,7 @@ namespace Shop.Web.Data.Entities
     using System;
     using System.ComponentModel.DataAnnotations;
 
-    public class Product:IEntity
+    public class Product : IEntity
     {
         public int Id { get; set; }
 
@@ -36,6 +36,24 @@ namespace Shop.Web.Data.Entities
         //relación uno a varios, product es el lado varios
         //solo acá se hace cambio para hacer la relación
         public User User { get; set; }
+
+        //Ls propiedades de lectura no modifican la base de datos
+        //por lo que puedo hacer tantas yo quiera
+        //y no migrar la base de datos
+        public string ImageFullPath {
+            get
+            {
+
+                if(string.IsNullOrEmpty(this.ImageUrl))
+                {
+                    return null;
+                }
+                return $"https://shopnevin.azurewebsites.net{this.ImageUrl.Substring(1)}";
+            }
+
+
+
+        }
     }
 
 }

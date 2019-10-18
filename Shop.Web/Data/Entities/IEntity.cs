@@ -12,8 +12,6 @@ namespace Shop.Web.Data.Entities
         /// cualquier clase debe implementar el ID
         /// </summary>
         int Id { get; set; }
-
-
-        
+       
     }
 }

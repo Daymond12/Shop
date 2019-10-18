@@ -29,7 +29,7 @@ namespace Shop.Web.Controllers.API
         public IActionResult GetProducts()
         {
             //return ok envuelve el resultado en un Json
-            return this.Ok(this.productRepository.GetAll());
+            return Ok(this.productRepository.GetAllWithUsers());
         }
 
 

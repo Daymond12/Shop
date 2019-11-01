@@ -1,4 +1,5 @@
-﻿using Shop.UIForms.Views;
+﻿using Shop.UIForms.ViewModels;
+using Shop.UIForms.Views;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -13,7 +14,12 @@ namespace Shop.UIForms
             /*navigation Page es un contenedor, e.d estamos arrancando
              la LoginPage desde el navigation page y no directamente
              cuyos resultados son:*/
-            MainPage = new NavigationPage(new loginPage());
+
+            //antes de instanciar la Page instanciamos la LoginViewModel asociada a la page
+            //que la page binda
+            MainViewModel.GetInstance().Login = new LoginViewModel();
+
+            this.MainPage = new NavigationPage(new loginPage());
 
         }
 

@@ -57,19 +57,25 @@ namespace Shop.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ProductViewModel view)
         {
+           
             if (ModelState.IsValid)
             {
+                
 
-               // #region RUTA_PARA_GUARDAR_IMG_EN EL SERVIDOR
+
+                // #region RUTA_PARA_GUARDAR_IMG_EN EL SERVIDOR
                 var path = string.Empty;
                 //si el imageFile es diferente de null
                 //y si .lengt(tamaño físico) es mayor a cero
                 if (view.ImageFile != null && view.ImageFile.Length > 0)
                 {
+                    //guid hace que n repita es un viajao de numeros
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
                     path = Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "wwwroot\\images\\Products",
-                        view.ImageFile.FileName);
+                        file);
 
 
                     // SUBIR LA IMG AL SERVIDOR
@@ -80,7 +86,7 @@ namespace Shop.Web.Controllers
                    // #endregion
 
 
-                    path = $"~/images/Products/{view.ImageFile.FileName}";
+                    path = $"~/images/Products/{file}";
                 }
 
                
@@ -95,7 +101,7 @@ namespace Shop.Web.Controllers
             //si falla lo devolvemos a la vista1
             return View(view);
         }
-
+        // En el post convertimos el productViewModel a  Product
         private Product ToProduct(ProductViewModel view, string path)
         {
             return new Product
@@ -131,7 +137,8 @@ namespace Shop.Web.Controllers
 
             return View(view);
         }
-
+        //le pasamos el producto que vamos a editar
+        //por lo tanto convertimos el Product a productViewModel
         private ProductViewModel ToProductViewModel(Product product)
         {
             return new ProductViewModel
@@ -160,45 +167,51 @@ namespace Shop.Web.Controllers
             {
                 try
                 {
-                    //ImageUrl es foto original por eso el hidden
-                    //ImageFile es la foto nueva
-                    var path = view.ImageUrl;
-                    //si el imageFile es diferente de null
-                    //y si .lengt(tamaño físico) es mayor a cero
-                    if (view.ImageFile != null && view.ImageFile.Length > 0)
+
+               
+                // #region RUTA_PARA_GUARDAR_IMG_EN EL SERVIDOR
+                var path = view.ImageUrl;
+                //si el imageFile es diferente de null
+                //y si .lengt(tamaño físico) es mayor a cero
+                if (view.ImageFile != null && view.ImageFile.Length > 0)
+                {
+                    //guid hace que n repita es un viajao de numeros
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\Products",
+                        file);
+
+
+                    // SUBIR LA IMG AL SERVIDOR
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        path = Path.Combine(
-                            Directory.GetCurrentDirectory(),
-                            "wwwroot\\images\\Products",
-                            view.ImageFile.FileName);
-
-
-                        // SUBIR LA IMG AL SERVIDOR
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await view.ImageFile.CopyToAsync(stream);
-                        }
-                        // #endregion
-
-
-                        path = $"~/images/Products/{view.ImageFile.FileName}";
+                        await view.ImageFile.CopyToAsync(stream);
                     }
-                    var product = this.ToProduct(view, path);
+                    // #endregion
 
-                    // TODO: Pending to change to: this.User.Identity.Name
-                    product.User = await this.userHelper.GetUserByEmailAsync("jzuluaga55@gmail.com");
-                    await this.productRepository.UpdateAsync(product);
+
+                    path = $"~/images/Products/{file}";
+                }
+
+
+                // TODO: Pending to change to: this.User.Identity.Name
+               view.User = await this.userHelper.GetUserByEmailAsync("jzuluaga55@gmail.com");
+                //cambiar de productViewModel a Product
+                var product = this.ToProduct(view, path);
+                await this.productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await this.productRepository.ExistAsync(view.Id))
+                    if(!await this.productRepository.ExistAsync(view.Id))
                     {
                         return NotFound();
                     }
                     else
-                    {
-                        throw;
+                    { throw;
                     }
+                   
                 }
                 return RedirectToAction(nameof(Index));
             }

@@ -4,6 +4,7 @@ namespace Shop.Web.Helpers
 
     using Microsoft.AspNetCore.Identity;
     using Shop.Web.Data.Entities;
+    using Shop.Web.Models;
     using System.Threading.Tasks;
 
     public interface IUserHelper
@@ -16,6 +17,10 @@ namespace Shop.Web.Helpers
         // le mandamos el usuario y la contraseña y retorna un IdentityResult
         //si pudi o no pudi, sino pudo x que no pudo
         Task<IdentityResult> AddUserAsync(User user, string password);
+
+        Task<SignInResult> LoginAsync(LoginViewModel model);
+
+        Task LogoutAsync();
 
     }
 }

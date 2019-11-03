@@ -5,6 +5,8 @@ namespace Shop.Web.Data
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
     using Shop.Web.Data.Entities;
+    using System.Linq;
+
     // public class DataContext: DbContext
     /// <summary>
     /// Se ha modificado el datacontext para user
@@ -23,6 +25,29 @@ namespace Shop.Web.Data
         //Creamos la conexión a la Base de datos
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //para evitar el warning
+            /*En el model builder hay una entidad producto
+           * ,mapea price como decimal obligatoriamente, sql lo está haciendo por defecto*/
+            modelBuilder.Entity<Product>()
+        .Property(p => p.Price)
+        .HasColumnType("decimal(18,2)");
+
+            //Boorado en cascada
+            var cascadeFKs = modelBuilder.Model
+        .G­etEntityTypes()
+        .SelectMany(t => t.GetForeignKeys())
+        .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Casca­de);
+            foreach (var fk in cascadeFKs)
+            {
+                fk.DeleteBehavior = DeleteBehavior.Restr­ict;
+            }
+
+
+            base.OnModelCreating(modelBuilder);
         }
 
     }

@@ -4,6 +4,7 @@ namespace Shop.Web.Controllers
     using Data;
     using Data.Entities;
     using Helpers;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Shop.Web.Models;
@@ -12,16 +13,17 @@ namespace Shop.Web.Controllers
     using System.Linq;
     using System.Threading.Tasks;
 
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly IProductRepository productRepository;
 
-        private readonly IUserHelper userHelper;
+        private readonly IUserHelper UserHelper;
 
         public ProductsController(IProductRepository productRepository, IUserHelper userHelper)
         {
             this.productRepository = productRepository;
-            this.userHelper = userHelper;
+            this.UserHelper = userHelper;
         }
 
         // GET: Products
@@ -90,8 +92,8 @@ namespace Shop.Web.Controllers
                 }
 
                
-                // TODO: Pending to change to: this.User.Identity.Name
-                view.User = await this.userHelper.GetUserByEmailAsync("jzuluaga55@gmail.com");
+               
+                view.User = await this.UserHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 //cambiar de productViewModel a Product
                 var product = this.ToProduct(view, path);
                 await this.productRepository.CreateAsync(product);
@@ -196,8 +198,8 @@ namespace Shop.Web.Controllers
                 }
 
 
-                // TODO: Pending to change to: this.User.Identity.Name
-               view.User = await this.userHelper.GetUserByEmailAsync("jzuluaga55@gmail.com");
+      
+               view.User = await this.UserHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 //cambiar de productViewModel a Product
                 var product = this.ToProduct(view, path);
                 await this.productRepository.UpdateAsync(product);

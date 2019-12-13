@@ -12,7 +12,9 @@ namespace Shop.Web
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using System;
+    using Microsoft.IdentityModel.Tokens;
+    using Shop.Web.Data.Repositories;
+    using System.Text;
 
     public class Startup
     {
@@ -26,7 +28,7 @@ namespace Shop.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           
+
 
             //le decimos que la clase user implemantara el IdentityRole
             //aca fongiguramos las restricciones y un viajao de  cosas
@@ -54,6 +56,20 @@ namespace Shop.Web
             {
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
+            //EL AddAuthentication ES PARA FINES DEL TOKEN
+            services.AddAuthentication()
+    .AddCookie()
+    .AddJwtBearer(cfg =>
+    {
+        cfg.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = this.Configuration["Tokens:Issuer"],
+            ValidAudience = this.Configuration["Tokens:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(this.Configuration["Tokens:Key"]))
+        };
+    });
+
 
             //INYECCÓN DEL SEEDB
             services.AddTransient<SeedDb>();
@@ -66,6 +82,8 @@ namespace Shop.Web
             //con eso el proyeco sabrá lo que tiene que inyectar y que implementar
             //se inyectan/configuran mis interfaces
             services.AddScoped<IUserHelper, UserHelper>();
+            //
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
 
 
@@ -74,7 +92,17 @@ namespace Shop.Web
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
+
             });
+
+
+            services.ConfigureApplicationCookie(options =>
+            {   //cuando haga login se va a la pagina de no autorizado
+                options.LoginPath = "/Account/NotAuthorized";
+                //y si necesita ingresar a otra pagina y no tiene permisos
+                options.AccessDeniedPath = "/Account/NotAuthorized";
+            });
+
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -93,6 +121,7 @@ namespace Shop.Web
             //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             //    app.UseHsts();
             //}
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseDeveloperExceptionPage();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -22,6 +22,15 @@ namespace Shop.Web.Data
         //En este punto he modificado la base de datos y debo correr el modo comando     
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+
+        public DbSet<OrderDetailTemp> OrderDetailTemps { get; set; }
+
+        //mandamos la tabla City a la base de datos(City es una colección)
+        public DbSet<City> Cities { get; set; }
+
         //Creamos la conexión a la Base de datos
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {

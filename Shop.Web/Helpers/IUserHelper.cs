@@ -11,7 +11,7 @@ namespace Shop.Web.Helpers
     {
         ///ESTA CLASE NOS AYUDARÁ A EVITAR ESTAR INSTANCIADNO
         ///EL UserManager
-   
+
         Task<User> GetUserByEmailAsync(string email);
 
         // le mandamos el usuario y la contraseña y retorna un IdentityResult
@@ -22,6 +22,17 @@ namespace Shop.Web.Helpers
 
         Task LogoutAsync();
 
+        Task<IdentityResult> UpdateUserAsync(User user);
+
+        Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
+
+        Task<SignInResult> ValidatePasswordAsync(User user, string password);
+        //
+        Task CheckRoleAsync(string roleName);
+
+        Task AddUserToRoleAsync(User user, string roleName);
+
+        Task<bool> IsUserInRoleAsync(User user, string roleName);
     }
 }
 

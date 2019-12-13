@@ -21,10 +21,12 @@ namespace Shop.Web.Data.Entities
         public string ImageUrl { get; set; }
 
         [Display(Name = "Last Purchase")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? LastPurchase { get; set; }
         //Los DateTime por defecto son NotNull
         //El ? de C# me permite que sean campos que acepten valores nulos
 
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Last Sale")]
         public DateTime? LastSale { get; set; }
 

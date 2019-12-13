@@ -11,21 +11,27 @@ namespace Shop.Web.Helpers
     {
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> singInManager;
+        private readonly RoleManager<IdentityRole> roleManager;
 
-        //Inyectamos el usar managaer en el contructor
+        //Inyectamos el userManagaer en el contructor
 
         public UserHelper(UserManager<User> userManager, 
-            SignInManager<User> singInManager)
+            SignInManager<User> singInManager,
+            RoleManager<IdentityRole> roleManager)
         {
             this.userManager = userManager;
             //El singInManager es para login y logout
             this.singInManager = singInManager;
+            //El roleManager es para los roles
+            this.roleManager = roleManager;
         }
 
         public async Task<IdentityResult> AddUserAsync(User user, string password)
         {
             return await this.userManager.CreateAsync(user, password);
         }
+
+       
 
         //User es mi clase extendida del UserIdentity
         public async Task<User> GetUserByEmailAsync(string email)
@@ -48,6 +54,49 @@ namespace Shop.Web.Helpers
         public async Task LogoutAsync()
         {
             await this.singInManager.SignOutAsync();
+        }
+
+        public async Task<IdentityResult> UpdateUserAsync(User user)
+        {
+            return await this.userManager.UpdateAsync(user);
+        }
+
+        public async Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword)
+        {
+            return await this.userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+        }
+
+        public async Task<SignInResult> ValidatePasswordAsync(User user, string password)
+        {
+            return await this.singInManager.CheckPasswordSignInAsync(
+                user,
+                password,
+                //false es para el contador de intentos fallidos para bloquear el usuario
+                false);
+        }
+
+        public async Task CheckRoleAsync(string roleName)
+        {
+            var roleExists = await this.roleManager.RoleExistsAsync(roleName);
+            if (!roleExists)
+            {
+                await this.roleManager.CreateAsync(new IdentityRole
+                {
+                    Name = roleName
+                });
+            }
+
+        }
+
+        public async Task AddUserToRoleAsync(User user, string roleName)
+        {
+            await this.userManager.AddToRoleAsync(user, roleName);
+        }
+
+        public async Task<bool> IsUserInRoleAsync(User user, string roleName)
+        {
+            //buscar si el usuaio pertenece a ese rol
+         return await  this.userManager.IsInRoleAsync(user, roleName);
         }
     }
 }

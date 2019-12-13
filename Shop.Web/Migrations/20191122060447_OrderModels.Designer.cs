@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop.Web.Data;
 
 namespace Shop.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20191122060447_OrderModels")]
+    partial class OrderModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,41 +174,7 @@ namespace Shop.Web.Migrations
                     b.ToTable("OrderDetails");
                 });
 
-            modelBuilder.Entity("Shop.Web.Data.Entities.City", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("CountryId");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("Cities");
-                });
-
-            modelBuilder.Entity("Shop.Web.Data.Entities.Country", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("Shop.Web.Data.Entities.OrderDetailTemp", b =>
+            modelBuilder.Entity("OrderDetailTemp", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -228,6 +196,19 @@ namespace Shop.Web.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("OrderDetailTemps");
+                });
+
+            modelBuilder.Entity("Shop.Web.Data.Entities.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
                 });
 
             modelBuilder.Entity("Shop.Web.Data.Entities.Product", b =>
@@ -269,11 +250,6 @@ namespace Shop.Web.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(100);
-
-                    b.Property<int>("CityId");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
@@ -282,11 +258,9 @@ namespace Shop.Web.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(100);
+                    b.Property<string>("FirstName");
 
-                    b.Property<string>("LastName")
-                        .HasMaxLength(100);
+                    b.Property<string>("LastName");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -312,8 +286,6 @@ namespace Shop.Web.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CityId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -391,14 +363,7 @@ namespace Shop.Web.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Shop.Web.Data.Entities.City", b =>
-                {
-                    b.HasOne("Shop.Web.Data.Entities.Country")
-                        .WithMany("Cities")
-                        .HasForeignKey("CountryId");
-                });
-
-            modelBuilder.Entity("Shop.Web.Data.Entities.OrderDetailTemp", b =>
+            modelBuilder.Entity("OrderDetailTemp", b =>
                 {
                     b.HasOne("Shop.Web.Data.Entities.Product", "Product")
                         .WithMany()
@@ -416,14 +381,6 @@ namespace Shop.Web.Migrations
                     b.HasOne("Shop.Web.Data.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("Shop.Web.Data.Entities.User", b =>
-                {
-                    b.HasOne("Shop.Web.Data.Entities.City", "City")
-                        .WithMany()
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

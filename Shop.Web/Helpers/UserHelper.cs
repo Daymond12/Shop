@@ -3,9 +3,12 @@
 namespace Shop.Web.Helpers
 {
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
     using Shop.Web.Data.Entities;
     using Shop.Web.Models;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     public class UserHelper : IUserHelper
     {
@@ -98,5 +101,57 @@ namespace Shop.Web.Helpers
             //buscar si el usuaio pertenece a ese rol
          return await  this.userManager.IsInRoleAsync(user, roleName);
         }
+
+        #region MÉTODOS PARA USO DEL CORREO
+        public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
+        {
+            return await this.userManager.GenerateEmailConfirmationTokenAsync(user);
+        }
+
+        public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+        {
+            return await this.userManager.ConfirmEmailAsync(user, token);
+        }
+
+        public async Task<User> GetUserByIdAsync(string userId)
+        {
+            return await this.userManager.FindByIdAsync(userId);
+        }
+        #endregion
+
+
+        public async Task<string> GeneratePasswordResetTokenAsync(User user)
+        {
+            return await this.userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
+        {
+            return await this.userManager.ResetPasswordAsync(user, token, password);
+        }
+
+        #region MÉTODOS PARA EL ADMINISTRADOR DE USUARIOS
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await this.userManager.Users
+                .Include(u => u.City)
+                .OrderBy(u => u.FirstName)
+                .ThenBy(u => u.LastName)
+                .ToListAsync();
+        }
+
+        public async Task RemoveUserFromRoleAsync(User user, string roleName)
+        {
+            await this.userManager.RemoveFromRoleAsync(user, roleName);
+        }
+
+        public async Task DeleteUserAsync(User user)
+        {
+            await this.userManager.DeleteAsync(user);
+        }
+
+        #endregion
+
+
     }
 }

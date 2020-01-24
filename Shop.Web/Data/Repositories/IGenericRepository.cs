@@ -12,9 +12,12 @@ namespace Shop.Web.Data
 
         Task<T> GetByIdAsync(int id);//devuelve un T(cualquier cosa)
 
-        Task CreateAsync(T entity);//adiciona un T(cualquier cosa), etc, etc
+        //adiciona un T(cualquier cosa), etc, etc
+        // Task<T> e.d euq devuelve el moedlo tal cual fué mapeado en la BD
 
-        Task UpdateAsync(T entity);
+        Task<T> CreateAsync(T entity);
+
+        Task<T> UpdateAsync(T entity);
 
         Task DeleteAsync(T entity);
 

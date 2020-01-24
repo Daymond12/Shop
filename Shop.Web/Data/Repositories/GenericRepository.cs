@@ -32,16 +32,39 @@ namespace Shop.Web.Data
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task CreateAsync(T entity)
+
+
+        /// <summary>
+        /// los sig métodos
+        ///cambiaron en el repositorio, esos metodos devolvían un void
+        ///y no regresaban lo que estab en la base de datos
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+
+        //public async Task CreateAsync(T entity)
+        //{
+        //    await this.context.Set<T>().AddAsync(entity);
+        //    await SaveAllAsync();
+        //}
+
+        //public async Task UpdateAsync(T entity)
+        //{
+        //    this.context.Set<T>().Update(entity);
+        //    await SaveAllAsync();
+        //}
+        public async Task<T> CreateAsync(T entity)
         {
             await this.context.Set<T>().AddAsync(entity);
             await SaveAllAsync();
+            return entity;
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             this.context.Set<T>().Update(entity);
             await SaveAllAsync();
+            return entity;
         }
 
         public async Task DeleteAsync(T entity)

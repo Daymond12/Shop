@@ -2,9 +2,11 @@
 
 namespace Shop.Web.Data
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Entities;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using Models;
 
     public interface ICountryRepository : IGenericRepository<Country>
@@ -26,6 +28,16 @@ namespace Shop.Web.Data
 
         //borrrar ciudad
         Task<int> DeleteCityAsync(City city);
+
+        //Llenar combo de paises
+        IEnumerable<SelectListItem> GetComboCountries();
+
+        //llenar combo de ciudades que pertenecen al pais de parametro 
+        IEnumerable<SelectListItem> GetComboCities(int conuntryId);
+
+        //método que le pasamos una ciudad y nos deculeve el pais
+        //al que pertenece
+        Task<Country> GetCountryAsync(City city);
     }
 
 }

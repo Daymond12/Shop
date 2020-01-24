@@ -28,14 +28,10 @@
 
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="wwwroot\images\Products\" />
   </ItemGroup>
 
 
@@ -255,6 +251,11 @@
     <None Include="wwwroot\node_modules\font-awesome\scss\_screen-reader.scss" />
     <None Include="wwwroot\node_modules\font-awesome\scss\_stacked.scss" />
     <None Include="wwwroot\node_modules\font-awesome\scss\_variables.scss" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shop.Common\Shop.Common.csproj" />
   </ItemGroup>
 
 </Project>

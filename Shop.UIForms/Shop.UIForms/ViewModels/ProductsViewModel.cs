@@ -51,11 +51,14 @@ namespace Shop.UIForms.ViewModels
         private async void LoadProducts()
         {
             this.IsRefreshing = true;
+            var url = Application.Current.Resources["UrlAPI"].ToString();
             var response = await this.apiService.GetListAsync<Product>(
-                "https://shopnevin.azurewebsites.net",
+                url,
                 "/api",
-                "/Products"
-                );
+                "/Products",
+                "bearer",
+                MainViewModel.GetInstance().Token.Token);
+
             this.IsRefreshing = false;
 
             if (!response.IsSuccess)
@@ -68,8 +71,9 @@ namespace Shop.UIForms.ViewModels
                 return;
             }
             //casteamos la clase Response
-            var myProducts = (List<Product>)response.Result;
-            this.Products = new ObservableCollection<Product>(myProducts);
+            var products = (List<Product>)response.Result;
+            this.Products = new ObservableCollection<Product>(products);
+            this.IsRefreshing = false;
         }
     }
 }

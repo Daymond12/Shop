@@ -34,6 +34,11 @@ namespace Shop.Web
             //aca fongiguramos las restricciones y un viajao de  cosas
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
+                //DefaultAuthenticatorProvider será nuestro proveedor de tokens
+                cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+                //cuando el usuario haga un SignIn requerirá confirmación de email
+                cfg.SignIn.RequireConfirmedEmail = true;
+
                 //unico usuario con un email
                 cfg.User.RequireUniqueEmail = true;
                 //no requiere numeros
@@ -49,6 +54,8 @@ namespace Shop.Web
                 //longitud mínima del password
                 cfg.Password.RequiredLength = 6;
             })
+                //adicionear el tokenProvider
+        .AddDefaultTokenProviders()
         .AddEntityFrameworkStores<DataContext>();
 
 
@@ -82,6 +89,14 @@ namespace Shop.Web
             //con eso el proyeco sabrá lo que tiene que inyectar y que implementar
             //se inyectan/configuran mis interfaces
             services.AddScoped<IUserHelper, UserHelper>();
+
+            //configuramos la inyección del Mailhelper para
+            //poder usarlos desde cualquier controlador o cualquier clase
+            //le decimos que el IMailHeper será implementado con una instancia de MailHelper
+            //esto nos prepara el correo para envío de correos
+            services.AddScoped<IMailHelper, MailHelper>();
+
+
             //
             services.AddScoped<IOrderRepository, OrderRepository>();
 

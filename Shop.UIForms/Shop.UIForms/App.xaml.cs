@@ -8,6 +8,10 @@ namespace Shop.UIForms
 {
     public partial class App : Application
     {
+        public static NavigationPage Navigator { get; internal set; }
+
+        public static MasterPage Master { get; internal set; }
+
         public App()
         {
             InitializeComponent();
@@ -19,6 +23,8 @@ namespace Shop.UIForms
             //que la page binda
             MainViewModel.GetInstance().Login = new LoginViewModel();
 
+            //la main page se establce cuando arranca el poyecto
+            //acá le decimos que la mainPage arranca por una navigationPage de loginPage
             this.MainPage = new NavigationPage(new loginPage());
 
         }

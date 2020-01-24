@@ -1,8 +1,10 @@
 ﻿
 namespace Shop.Web.Data.Entities
 {
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
     using Models;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -79,8 +81,62 @@ namespace Shop.Web.Data.Entities
         {
             return await this.context.Cities.FindAsync(id);
         }
+
+        public IEnumerable<SelectListItem> GetComboCountries()
+        {
+            //el SelectListItem es el elemento válido para un combo Box
+            /*arme una lista con un SelectListItem, vaya a colección de paises y selecciones un 
+             nuevo item y arme sus propiedades*/
+            var list = this.context.Countries.Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString()
+            }).OrderBy(l => l.Text).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Select a country...)",
+                Value = "0"
+            });
+
+            return list;
+        }
+
+        public IEnumerable<SelectListItem> GetComboCities(int conuntryId)
+        {
+            var country = this.context.Countries.Find(conuntryId);
+            var list = new List<SelectListItem>();
+            if (country != null)
+            {
+                list = country.Cities.Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString()
+                }).OrderBy(l => l.Text).ToList();
+            }
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Select a city...)",
+                Value = "0"
+            });
+
+            return list;
+        }
+
+        /*El siguiente metodo es importante por la siguiente razón:
+         , si tengo una ciudad debo saber a que´país corresponde*/
+        /*le paso la ciudad y le decimos, busqueme en paises donde al menos
+         una ciudad conicida con la ciudad que estoy pasando,
+         si es true devuelve FirstOrDefaultAsync*/
+        public async Task<Country> GetCountryAsync(City city)
+        {
+            return await this.context.Countries.Where(c => c.Cities.Any(ci => ci.Id == city.Id)).FirstOrDefaultAsync();
+        }
+
+
+
+
     }
-
-
 
 }

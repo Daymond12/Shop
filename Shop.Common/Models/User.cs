@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Shop.Common.Models
 {
-    public partial class User
+    public class User
     {
         [JsonProperty("firstName")]
         public string FirstName { get; set; }
@@ -41,7 +41,7 @@ namespace Shop.Common.Models
         public Guid ConcurrencyStamp { get; set; }
 
         [JsonProperty("phoneNumber")]
-        public long PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
 
         [JsonProperty("phoneNumberConfirmed")]
         public bool PhoneNumberConfirmed { get; set; }

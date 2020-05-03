@@ -1,8 +1,12 @@
 ﻿
+using GalaSoft.MvvmLight.Command;
 using Shop.Common.Models;
+using Shop.UIForms.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 
 namespace Shop.UIForms.ViewModels
 {
@@ -19,11 +23,27 @@ namespace Shop.UIForms.ViewModels
         //Guardar en memoria el Token
         public TokenResponse Token { get; set; }
 
+        //guardamos el Email x q necesitamos saber que usuario
+        //crea el producto
+        public string UserEmail { get; set; }
+
+        //guardaremos el UserPassword x que en caso que el usuario haga reset a su password
+        //se pedirá el usuario actual, e.d el correcto
+        public string UserPassword { get; set; }
+
+
         //La MainViewModel liga las demás páginas
         //si hay una ProductPage es x que hay una ProductViewModel
         public LoginViewModel Login { get; set; }
         public ProductsViewModel Products { get; set; }
 
+        public AddProductViewModel AddProduct { get; set; }
+
+        public EditProductViewModel EditProduct { get; set; }
+
+        public ICommand AddProductCommand { get { return new RelayCommand(this.GoAddProduct); } }
+
+       
 
         public MainViewModel()
         {
@@ -37,12 +57,21 @@ namespace Shop.UIForms.ViewModels
             instance = this;
             this.LoadMenus();
         }
+
+        //GoAddProduct llama la página del producto
+        private async void GoAddProduct()
+        {
+            //estamos en la MainViewModel apuntamos con this
+            this.AddProduct = new AddProductViewModel();
+            //apilamos y lo ponemos a navegar
+            await App.Navigator.PushAsync(new AddProductPage());
+        }
         //devuelve una instancia de la mainviewModel
         private void LoadMenus()
         {
             //menus es una nueva lista de Menu
             var menus = new List<Menu>
-    {
+     {
         new Menu
         {
             Icon = "ic_info",

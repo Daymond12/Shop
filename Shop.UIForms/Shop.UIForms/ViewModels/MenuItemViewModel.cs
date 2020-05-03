@@ -7,7 +7,7 @@ namespace Shop.UIForms.ViewModels
     using System.Windows.Input;
     using Xamarin.Forms;
     
-
+    //Este metodo es para mantener limpio el modelo de Menú
     public class MenuItemViewModel : Common.Models.Menu
     {
         public ICommand SelectMenuCommand { get { return new RelayCommand(this.SelectMenu); } }

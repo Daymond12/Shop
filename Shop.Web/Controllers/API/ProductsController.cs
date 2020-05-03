@@ -11,6 +11,7 @@ namespace Shop.Web.Controllers.API
     using Shop.Web.Data.Entities;
 
 
+
     //Vamos a rutear el API
     /// <summary>
     /// e.d cuando publiqe mi sitio Web xxx/api/nameController
@@ -57,7 +58,7 @@ namespace Shop.Web.Controllers.API
                 return this.BadRequest(ModelState);
             }
 
-            var user = await this.userHelper.GetUserByEmailAsync(product.User.Email);
+            var user = await this.userHelper.GetUserByEmailAsync(product.User.UserName);
             if (user == null)
             {
                 return this.BadRequest("Invalid user");

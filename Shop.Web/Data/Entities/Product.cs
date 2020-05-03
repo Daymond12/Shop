@@ -50,7 +50,7 @@ namespace Shop.Web.Data.Entities
                 {
                     return null;
                 }
-                return $"https://shoplace.azurewebsites.net{this.ImageUrl.Substring(1)}";
+                return $"https://shopcore.azurewebsites.net{this.ImageUrl.Substring(1)}";
             }
 
 

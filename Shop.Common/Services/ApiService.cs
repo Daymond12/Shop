@@ -16,6 +16,7 @@ namespace Shop.Common.Services
      //controller es /product
 
         //Este metodo se usa sin seguridad
+        //trae una lista de productos de forma no segura    
         public async Task<Response> GetListAsync<T>(
             string urlBase, 
             string servicePrefix, 
@@ -50,11 +51,11 @@ namespace Shop.Common.Services
 
                 //deserializa el enorme string del <T> y lo vuelve un Json
                 var list = JsonConvert.DeserializeObject<List<T>>(result);
-                return new Response
-                {
-                    IsSuccess = true,
-                    Result = list
-                };
+                    return new Response
+                    {
+                        IsSuccess = true,
+                        Result = list
+                    };
             }
             catch (Exception ex)
             {
@@ -119,7 +120,7 @@ namespace Shop.Common.Services
         }
 
 
-        //MÉTODO PARA VONSEGUIR EL TOKEN
+        //MÉTODO PARA CONSEGUIR Y CONSUMIR EL TOKEN
     public async Task<Response> GetTokenAsync(
     string urlBase,
     string servicePrefix,
@@ -169,6 +170,7 @@ namespace Shop.Common.Services
             }
         }
 
+        //POST GENERICO
     public async Task<Response> PostAsync<T>(
     string urlBase,
     string servicePrefix,
@@ -180,9 +182,12 @@ namespace Shop.Common.Services
             try
             {
                 //lineas request y content  para serializar body
-                var request = JsonConvert.SerializeObject(model);
+                var request = JsonConvert.SerializeObject(model, new JsonSerializerSettings {NullValueHandling =  NullValueHandling.Ignore });
+               
                 var content = new StringContent(request, Encoding.UTF8, "application/json");
-                //linea para serializar body
+
+
+
                 var client = new HttpClient
                 {
                     BaseAddress = new Uri(urlBase)
@@ -221,6 +226,121 @@ namespace Shop.Common.Services
             }
         }
 
+
+
+
+        //HACER PUT
+
+        public async Task<Response> PutAsync<T>(
+    string urlBase,
+    string servicePrefix,
+    string controller,
+    int id,
+    T model,
+    string tokenType,
+    string accessToken)
+        {
+            
+            try
+            {
+                
+                
+
+                var request = JsonConvert.SerializeObject(model);
+             
+               
+                
+               
+                var content = new StringContent(request, Encoding.UTF8, "application/json");
+                var client = new HttpClient
+                {
+                    BaseAddress = new Uri(urlBase)
+                };
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(tokenType, accessToken);
+                //hacemos el llamado
+                var url = $"{servicePrefix}{controller}/{id}";
+                var response = await client.PutAsync(url, content);
+                var answer = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = answer,
+                    };
+                }
+
+                var obj = JsonConvert.DeserializeObject<T>(answer);
+                return new Response
+                {
+                    IsSuccess = true,
+                    Result = obj,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+
+        //DELETE
+        public async Task<Response> DeleteAsync(
+            string urlBase,
+            string servicePrefix,
+            string controller,
+            int id,
+            string tokenType,
+            string accessToken)
+        {
+            try
+            {
+                var client = new HttpClient
+                {
+                    BaseAddress = new Uri(urlBase)
+                };
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(tokenType, accessToken);
+                var url = $"{servicePrefix}{controller}/{id}";
+                var response = await client.DeleteAsync(url);
+                var answer = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = answer,
+                    };
+                }
+
+                return new Response
+                {
+                    IsSuccess = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+
+        string reemplazar ( Models.User numero)
+        {
+            var PhoneNumber = numero.PhoneNumber.Replace(" ", "");
+            return PhoneNumber ;
+        }
+
     }
 
+   
 }

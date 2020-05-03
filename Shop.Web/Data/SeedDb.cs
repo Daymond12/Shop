@@ -89,18 +89,19 @@ public class SeedDb
     //y aparte de eso
     private async Task<User> AddUser(string userName, string firstName, string lastName, string role)
     {
+
         var user = new User
         {
-            FirstName = firstName,
+        FirstName = firstName,
             LastName = lastName,
             Email = userName,
             UserName = userName,
             Address = "Calle Luna Calle Sol",
-            PhoneNumber = "350 634 2747",
+            PhoneNumber =  "350 634 2747",
             CityId = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault().Id,
             City = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault()
         };
-
+      
         var result = await this.userHelper.AddUserAsync(user, "123456");
         if (result != IdentityResult.Success)
         {
